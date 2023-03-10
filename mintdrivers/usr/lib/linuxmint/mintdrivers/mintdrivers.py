@@ -130,9 +130,8 @@ class Application:
         # This will bring the ui back to pre-apply state. Returning True will reset
         # entirely.
 
-        # it thinks it's a PkClientError but it's really PkErrorEnum
+        # it thinks it's a PkClientError, but it's really PkErrorEnum
         # the GError code is set to 0xFF + code
-        real_code = error.code
         if error.code >= 0xFF:
             real_code = error.code - 0xFF
 
@@ -240,10 +239,9 @@ class Application:
             XApp.set_window_progress(self.window_main, prog_value)
 
     def on_driver_changes_finish(self, source, result, installs):
-        results = None
         errors = False
         try:
-            results = self.pk_task.generic_finish(result)
+            self.pk_task.generic_finish(result)
         except GLib.Error as e:
             errors = True
             if self.on_error(e):
@@ -653,8 +651,8 @@ class Application:
                 # define the order of introspection
                 for section in ('recommended', 'alternative', 'manually_installed', 'no_driver'):
                     for driver in sorted(drivers[section], key=lambda x: self.sort_string(drivers[section], x), reverse=True):
-                        if str(driver).startswith("nvidia-driver") and str(driver).endswith(("-server", "-open")):
-                            print("Ignoring server or open NVIDIA driver: ", driver)
+                        if str(driver).startswith("nvidia-driver") and str(driver).endswith(("-server")):
+                            print("Ignoring server NVIDIA driver: ", driver)
                             continue
                         radio_button = Gtk.RadioButton.new(None)
                         label = Gtk.Label()
